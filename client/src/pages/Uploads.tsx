@@ -4,6 +4,12 @@ import {
   Upload as UploadIcon,
   Image as ImageIcon,
   X as XIcon,
+  Music,
+  Settings,
+  Disc,
+  Gauge,
+  Volume2,
+  Clock,
 } from "lucide-react";
 
 const Upload = () => {
@@ -12,211 +18,340 @@ const Upload = () => {
   const [processing, setProcessing] = useState(false);
   const navigate = useNavigate();
 
+  // Music settings state
+  const [settings, setSettings] = useState({
+    dominant: "Acoustic Grand Piano",
+    scaleType: "Major",
+    noteLen: 32,
+    volumeMult: 1.0,
+    bpmMult: 1.0,
+    rhythmComplexity: 0.5,
+  });
+
   const handleDrag = (e: React.DragEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    if (e.type === "dragenter" || e.type === "dragover") {
-      setDragActive(true);
-    } else if (e.type === "dragleave") {
-      setDragActive(false);
-    }
+    setDragActive(e.type === "dragenter" || e.type === "dragover");
   };
 
   const handleDrop = (e: React.DragEvent) => {
     e.preventDefault();
     e.stopPropagation();
     setDragActive(false);
-    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
-      handleFiles(e.dataTransfer.files[0]);
-    }
+    if (e.dataTransfer.files?.[0]) handleFiles(e.dataTransfer.files[0]);
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    e.preventDefault();
-    if (e.target.files && e.target.files[0]) {
-      handleFiles(e.target.files[0]);
-    }
+    e.target.files?.[0] && handleFiles(e.target.files[0]);
   };
 
   const handleFiles = (file: File) => {
+    if (file.size > 10 * 1024 * 1024) {
+      alert("File size exceeds 10MB limit");
+      return;
+    }
+
     const reader = new FileReader();
-    reader.onload = (e) => {
-      if (e.target?.result) {
-        setSelectedImage(e.target.result as string);
-      }
-    };
+    reader.onload = (e) =>
+      e.target?.result && setSelectedImage(e.target.result as string);
     reader.readAsDataURL(file);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!selectedImage) return;
+
+    const inputFile = document.getElementById(
+      "file-upload"
+    ) as HTMLInputElement;
+    const file = inputFile.files?.[0];
+    if (!file) return;
+
     setProcessing(true);
-  
-    const inputFile = document.getElementById("file-upload") as HTMLInputElement;
-    if (!inputFile || !inputFile.files || inputFile.files.length === 0) return;
-  
-    const formData = new FormData();
-    formData.append("image", inputFile.files[0]);
-  
+
     try {
-      const response = await fetch("http://localhost:5000/upload", {
-        method: "POST",
-        body: formData,
-      });
-  
-      const data = await response.json();
-      setProcessing(false);
-  
-      if (response.ok) {
-        navigate("/results", {
-          state: {
-            imageUrl: data.image_url,
-          },
-        });
-      } else {
-        alert("Upload failed: " + data.error);
+      const formData = new FormData();
+      formData.append("image", file);
+      formData.append("settings", JSON.stringify(settings));
+
+      const response = await fetch(
+        "http://localhost:8000/api/v1/music/generate",
+        {
+          method: "POST",
+          body: formData,
+        }
+      );
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.detail || "Generation failed");
       }
+
+      const result = await response.json();
+
+      navigate("/results", {
+        state: {
+          audioUrl: `http://localhost:8000${result.audio_url}`,
+          bpm: result.bpm,
+          instruments: result.instruments,
+          duration: result.duration,
+          waveform: result.waveform,
+          hueHistogram: result.hue_histogram,
+          imageUrl: selectedImage,
+        },
+      });
     } catch (error) {
-      console.error("Upload error:", error);
-      alert("Something went wrong while uploading.");
+      console.error("Generation error:", error);
+      alert(error instanceof Error ? error.message : "Music generation failed");
+    } finally {
       setProcessing(false);
     }
   };
-  
 
-  const clearImage = () => {
-    setSelectedImage(null);
-  };
+  const clearImage = () => setSelectedImage(null);
 
   return (
     <div className="py-12 min-h-screen bg-gradient-to-br from-black via-purple-900 to-black">
-      <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center">
           <h1 className="text-3xl font-extrabold text-white sm:text-4xl">
-            Upload Your Image
+            Create Musical Art
           </h1>
           <p className="mt-4 text-lg text-purple-300">
-            Upload any image and our AI will transform it into a unique musical
-            composition.
+            Transform visual beauty into auditory experience
           </p>
         </div>
-        <div className="mt-12">
-          <form onSubmit={handleSubmit}>
-            {!selectedImage ? (
+
+        <div className="mt-12 grid gap-8 lg:grid-cols-2">
+          {/* Left Column - Upload Section */}
+          <div className="lg:col-span-1">
+            <form onSubmit={handleSubmit} className="space-y-6">
               <div
-                className={`max-w-lg mx-auto flex justify-center px-6 pt-5 pb-6 border-2 border-dashed rounded-md 
+                className={`relative border-2 border-dashed rounded-lg p-8 transition-all
                   ${
                     dragActive
-                      ? "border-purple-500 bg-purple-900 bg-opacity-30"
-                      : "border-purple-700 bg-gray-900 bg-opacity-50"
-                  }`}
+                      ? "border-purple-500 bg-purple-900/30"
+                      : "border-purple-700 bg-gray-900/50"
+                  }
+                  ${selectedImage ? "h-64" : "h-96"}`}
                 onDragEnter={handleDrag}
                 onDragOver={handleDrag}
                 onDragLeave={handleDrag}
                 onDrop={handleDrop}
               >
-                <div className="space-y-1 text-center">
-                  <ImageIcon className="mx-auto h-12 w-12 text-purple-400" />
-                  <div className="flex text-sm text-gray-300">
-                    <label
-                      htmlFor="file-upload"
-                      className="relative cursor-pointer bg-transparent rounded-md font-medium text-purple-400 hover:text-purple-300 focus-within:outline-none"
-                    >
-                      <span>Upload a file</span>
-                      <input
-                        id="file-upload"
-                        name="file-upload"
-                        type="file"
-                        className="sr-only"
-                        accept="image/*"
-                        onChange={handleChange}
-                      />
-                    </label>
-                    <p className="pl-1">or drag and drop</p>
+                {!selectedImage ? (
+                  <div className="flex flex-col items-center justify-center h-full space-y-4">
+                    <ImageIcon className="h-16 w-16 text-purple-400" />
+                    <div className="text-center">
+                      <label className="cursor-pointer text-purple-400 hover:text-purple-300">
+                        <span className="font-medium">Select image</span>
+                        <input
+                          id="file-upload"
+                          type="file"
+                          className="sr-only"
+                          accept="image/*"
+                          onChange={handleChange}
+                        />
+                      </label>
+                      <p className="mt-2 text-sm text-gray-400">
+                        or drag and drop
+                      </p>
+                    </div>
                   </div>
-                  <p className="text-xs text-gray-400">
-                    PNG, JPG, GIF up to 10MB
-                  </p>
+                ) : (
+                  <div className="relative h-full">
+                    <img
+                      src={selectedImage}
+                      alt="Preview"
+                      className="w-full h-full object-contain rounded-md"
+                    />
+                    <button
+                      type="button"
+                      onClick={clearImage}
+                      className="absolute top-2 right-2 p-1 bg-gray-900/70 rounded-full hover:bg-gray-800"
+                    >
+                      <XIcon className="h-5 w-5 text-purple-400" />
+                    </button>
+                  </div>
+                )}
+              </div>
+
+              {/* Music Settings Controls */}
+              <div className="space-y-4 bg-gray-900/50 p-6 rounded-lg">
+                <h3 className="flex items-center text-lg font-medium text-white">
+                  <Settings className="mr-2 h-5 w-5" />
+                  Composition Settings
+                </h3>
+
+                <div className="space-y-4">
+                  <div className="space-y-2">
+                    <label className="flex items-center text-sm text-purple-300">
+                      <Music className="mr-2 h-4 w-4" />
+                      Lead Instrument
+                    </label>
+                    <select
+                      value={settings.dominant}
+                      onChange={(e) =>
+                        setSettings({ ...settings, dominant: e.target.value })
+                      }
+                      className="w-full bg-gray-800 text-white rounded-md p-2 border border-purple-700 focus:ring-2 focus:ring-purple-500"
+                    >
+                      {Object.keys(INSTRUMENT_MAP).map((instrument) => (
+                        <option key={instrument} value={instrument}>
+                          {instrument}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <label className="flex items-center text-sm text-purple-300">
+                        <Disc className="mr-2 h-4 w-4" />
+                        Scale Type
+                      </label>
+                      <select
+                        value={settings.scaleType}
+                        onChange={(e) =>
+                          setSettings({
+                            ...settings,
+                            scaleType: e.target.value,
+                          })
+                        }
+                        className="w-full bg-gray-800 text-white rounded-md p-2 border border-purple-700"
+                      >
+                        {Object.keys(SCALE_MODES).map((scale) => (
+                          <option key={scale} value={scale}>
+                            {scale}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+
+                    <div className="space-y-2">
+                      <label className="flex items-center text-sm text-purple-300">
+                        <Clock className="mr-2 h-4 w-4" />
+                        Note Count
+                      </label>
+                      <input
+                        type="number"
+                        min="8"
+                        max="128"
+                        value={settings.noteLen}
+                        onChange={(e) =>
+                          setSettings({
+                            ...settings,
+                            noteLen: Number(e.target.value),
+                          })
+                        }
+                        className="w-full bg-gray-800 text-white rounded-md p-2 border border-purple-700"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="space-y-2">
+                    <label className="flex items-center text-sm text-purple-300">
+                      <Volume2 className="mr-2 h-4 w-4" />
+                      Volume Multiplier
+                    </label>
+                    <input
+                      type="range"
+                      min="0.1"
+                      max="3"
+                      step="0.1"
+                      value={settings.volumeMult}
+                      onChange={(e) =>
+                        setSettings({
+                          ...settings,
+                          volumeMult: Number(e.target.value),
+                        })
+                      }
+                      className="w-full accent-purple-500"
+                    />
+                    <span className="text-xs text-purple-400">
+                      {settings.volumeMult}x
+                    </span>
+                  </div>
+
+                  <div className="space-y-2">
+                    <label className="flex items-center text-sm text-purple-300">
+                      <Gauge className="mr-2 h-4 w-4" />
+                      Tempo Multiplier
+                    </label>
+                    <input
+                      type="range"
+                      min="0.1"
+                      max="3"
+                      step="0.1"
+                      value={settings.bpmMult}
+                      onChange={(e) =>
+                        setSettings({
+                          ...settings,
+                          bpmMult: Number(e.target.value),
+                        })
+                      }
+                      className="w-full accent-purple-500"
+                    />
+                    <span className="text-xs text-purple-400">
+                      {settings.bpmMult}x
+                    </span>
+                  </div>
                 </div>
               </div>
-            ) : (
-              <div className="max-w-lg mx-auto">
-                <div className="relative">
-                  <img
-                    src={selectedImage}
-                    alt="Selected"
-                    className="w-full h-64 object-contain rounded-md border border-purple-700 bg-gray-900 bg-opacity-50"
-                  />
-                  <button
-                    type="button"
-                    onClick={clearImage}
-                    className="absolute top-2 right-2 bg-gray-900 bg-opacity-70 rounded-full p-1 shadow-md hover:bg-gray-800"
-                  >
-                    <XIcon className="h-5 w-5 text-purple-400" />
-                  </button>
-                </div>
-              </div>
-            )}
-            <div className="mt-8 text-center">
+
               <button
                 type="submit"
                 disabled={!selectedImage || processing}
-                className={`inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-white 
+                className={`w-full py-3 px-6 rounded-md font-medium transition-all
                   ${
-                    !selectedImage || processing
-                      ? "bg-purple-800 bg-opacity-50 cursor-not-allowed"
-                      : "bg-purple-600 hover:bg-purple-700"
+                    processing || !selectedImage
+                      ? "bg-purple-800/50 text-gray-400 cursor-not-allowed"
+                      : "bg-purple-600 hover:bg-purple-700 text-white"
                   }`}
               >
                 {processing ? (
-                  <>
-                    <svg
-                      className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                    >
-                      <circle
-                        className="opacity-25"
-                        cx="12"
-                        cy="12"
-                        r="10"
-                        stroke="currentColor"
-                        strokeWidth="4"
-                      ></circle>
-                      <path
-                        className="opacity-75"
-                        fill="currentColor"
-                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                      ></path>
-                    </svg>
-                    Creating Your Music...
-                  </>
+                  <div className="flex items-center justify-center">
+                    <div className="animate-spin mr-3">
+                      <Disc className="h-5 w-5" />
+                    </div>
+                    Composing Your Masterpiece...
+                  </div>
                 ) : (
-                  <>
-                    <UploadIcon className="-ml-1 mr-2 h-5 w-5" />
+                  <div className="flex items-center justify-center">
+                    <UploadIcon className="mr-2 h-5 w-5" />
                     Generate Music
-                  </>
+                  </div>
                 )}
               </button>
-            </div>
-          </form>
-          <div className="mt-12 bg-gray-900 bg-opacity-70 backdrop-blur-sm rounded-lg p-6">
-            <h2 className="text-lg font-medium text-white">
-              Tips for best results:
-            </h2>
-            <ul className="mt-4 text-sm text-purple-300 list-disc list-inside space-y-2">
-              <li>Use high-quality images with clear subjects</li>
-              <li>
-                Images with strong colors and contrast create more dynamic music
+            </form>
+          </div>
+
+          {/* Right Column - Tips Section */}
+          <div className="lg:col-span-1 bg-gray-900/50 p-6 rounded-lg h-fit">
+            <h3 className="flex items-center text-lg font-medium text-white mb-4">
+              <Music className="mr-2 h-5 w-5 text-purple-400" />
+              Composition Tips
+            </h3>
+            <ul className="space-y-4 text-sm text-purple-300">
+              <li className="flex items-start">
+                <span className="text-purple-400 mr-2">•</span>
+                High contrast images create more dynamic rhythm patterns
               </li>
-              <li>
-                Landscapes, abstract art, and portraits work particularly well
+              <li className="flex items-start">
+                <span className="text-purple-400 mr-2">•</span>
+                Warm colors tend to produce higher pitched melodies
               </li>
-              <li>
-                Very dark or very bright images may produce more subtle
-                compositions
+              <li className="flex items-start">
+                <span className="text-purple-400 mr-2">•</span>
+                Complex textures generate richer harmonic content
+              </li>
+              <li className="flex items-start">
+                <span className="text-purple-400 mr-2">•</span>
+                Vertical lines influence tempo, horizontal lines affect sustain
+              </li>
+              <li className="flex items-start">
+                <span className="text-purple-400 mr-2">•</span>
+                Experiment with different instrument combinations
               </li>
             </ul>
           </div>
@@ -224,6 +359,28 @@ const Upload = () => {
       </div>
     </div>
   );
+};
+
+// Constants matching your ML model
+const INSTRUMENT_MAP = {
+  "Acoustic Grand Piano": 0,
+  "Electric Guitar (jazz)": 26,
+  "Acoustic Guitar (nylon)": 24,
+  Violin: 40,
+  Trumpet: 56,
+  "Alto Sax": 65,
+  Flute: 73,
+  "Synth Pad": 88,
+  "Steel Drums": 114,
+  "Drum Kit": 118,
+};
+
+const SCALE_MODES = {
+  Major: [0, 2, 4, 5, 7, 9, 11],
+  "Natural Minor": [0, 2, 3, 5, 7, 8, 10],
+  Pentatonic: [0, 3, 5, 7, 10],
+  Blues: [0, 3, 5, 6, 7, 10],
+  Dorian: [0, 2, 3, 5, 7, 9, 10],
 };
 
 export default Upload;

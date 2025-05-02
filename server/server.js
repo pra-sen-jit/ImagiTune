@@ -1,4 +1,5 @@
-require("dotenv").config({ path: "./.env" }); // Explicit path for clarity
+require("dotenv").config({ path: "./.env" });
+import musicRoutes from "./routes/musicRoutes";
 
 const express = require("express");
 const mongoose = require("mongoose");
@@ -31,6 +32,7 @@ app.use(
 );
 app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ extended: false }));
+app.use("/api/music", musicRoutes);
 
 // Static files
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
