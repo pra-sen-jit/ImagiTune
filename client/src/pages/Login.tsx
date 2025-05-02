@@ -1,23 +1,40 @@
 import React, { useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { AuthService } from "../services/authService";
+import { useAuth } from "../context/AuthContext";
 
 const Login: React.FC = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const navigate = useNavigate();
+  const { login } = useAuth();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Implement your login logic here
+
+    // Basic validation
     if (!email || !password) {
       setError("Please fill in all fields");
       return;
     }
+
     // Reset error if validation passes
     setError("");
-    console.log("Login attempt with:", { email });
+    setIsLoading(true);
+
+    try {
+      const { token, user } = await AuthService.login({ email, password });
+      login(token, user); // Update auth context
+      navigate("/dashboard"); // Redirect to dashboard
+    } catch (err) {
+      setError(err.message || "Login failed. Please try again.");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -49,6 +66,7 @@ const Login: React.FC = () => {
               placeholder="your@email.com"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
+              disabled={isLoading}
             />
           </div>
 
@@ -67,30 +85,61 @@ const Login: React.FC = () => {
                 placeholder="••••••••"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
+                disabled={isLoading}
               />
               <button
                 type="button"
                 className="absolute right-3 top-3 text-purple-400"
                 onClick={() => setShowPassword(!showPassword)}
+                disabled={isLoading}
               >
                 {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
               </button>
             </div>
             <div className="flex justify-end mt-2">
-              <a
-                href="#"
+              <Link
+                to="/forgot-password"
                 className="text-sm text-purple-400 hover:text-purple-300"
               >
                 Forgot password?
-              </a>
+              </Link>
             </div>
           </div>
 
           <button
             type="submit"
-            className="w-full bg-purple-600 hover:bg-purple-700 text-white font-medium py-3 px-4 rounded-md transition duration-200 ease-in-out"
+            className={`w-full bg-purple-600 hover:bg-purple-700 text-white font-medium py-3 px-4 rounded-md transition duration-200 ease-in-out flex justify-center items-center ${
+              isLoading ? "opacity-75 cursor-not-allowed" : ""
+            }`}
+            disabled={isLoading}
           >
-            Sign In
+            {isLoading ? (
+              <>
+                <svg
+                  className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                >
+                  <circle
+                    className="opacity-25"
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    strokeWidth="4"
+                  ></circle>
+                  <path
+                    className="opacity-75"
+                    fill="currentColor"
+                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                  ></path>
+                </svg>
+                Signing In...
+              </>
+            ) : (
+              "Sign In"
+            )}
           </button>
         </form>
 

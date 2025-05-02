@@ -1,29 +1,45 @@
 import React, { useState } from "react";
-import { Eye, EyeOff, Music } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Eye, EyeOff, Music, Loader2 } from "lucide-react";
+import { Link, useNavigate } from "react-router-dom";
+import { AuthService } from "../services/authService";
+import { useAuth } from "../context/AuthContext";
 
 const Signup: React.FC = () => {
   const [formData, setFormData] = useState({
-    name: "",
+    username: "",
     email: "",
     password: "",
     confirmPassword: "",
   });
   const [showPassword, setShowPassword] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [isLoading, setIsLoading] = useState(false);
+  const [apiError, setApiError] = useState("");
+  const navigate = useNavigate();
+  const { login } = useAuth();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
+    setFormData((prev) => ({ ...prev, [name]: value }));
+    // Clear error when user types
+    if (errors[name]) {
+      setErrors((prev) => ({ ...prev, [name]: "" }));
+    }
+    if (apiError) setApiError("");
   };
 
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
 
-    if (!formData.name) newErrors.name = "Name is required";
+    if (!formData.username.trim()) {
+      newErrors.username = "Username is required";
+    } else if (formData.username.length < 3) {
+      newErrors.username = "Username must be at least 3 characters";
+    }
+
     if (!formData.email) {
       newErrors.email = "Email is required";
-    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
+    } else if (!/^\S+@\S+\.\S+$/.test(formData.email)) {
       newErrors.email = "Email address is invalid";
     }
 
@@ -37,25 +53,34 @@ const Signup: React.FC = () => {
       newErrors.confirmPassword = "Passwords do not match";
     }
 
-    return newErrors;
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const validationErrors = validateForm();
 
-    if (Object.keys(validationErrors).length > 0) {
-      setErrors(validationErrors);
-      return;
+    if (!validateForm()) return;
+
+    setIsLoading(true);
+    setApiError("");
+
+    try {
+      const { username, email, password } = formData;
+      const { token, user } = await AuthService.signup({
+        username,
+        email,
+        password,
+      });
+
+      login(token, user); // Update auth context
+      navigate("/dashboard"); // Redirect to dashboard
+    } catch (error: any) {
+      console.error("Signup error:", error);
+      setApiError(error.message || "Signup failed. Please try again.");
+    } finally {
+      setIsLoading(false);
     }
-
-    // Reset errors if validation passes
-    setErrors({});
-    console.log("Sign up with:", {
-      name: formData.name,
-      email: formData.email,
-    });
-    // Implement your signup logic here
   };
 
   return (
@@ -71,27 +96,34 @@ const Signup: React.FC = () => {
           </p>
         </div>
 
+        {apiError && (
+          <div className="mb-4 p-3 bg-red-900 bg-opacity-60 text-red-200 rounded-md">
+            {apiError}
+          </div>
+        )}
+
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
             <label
-              htmlFor="name"
+              htmlFor="username"
               className="block text-purple-200 text-sm font-medium mb-2"
             >
-              Full Name
+              Username
             </label>
             <input
-              id="name"
-              name="name"
+              id="username"
+              name="username"
               type="text"
               className={`w-full bg-gray-800 text-white border ${
-                errors.name ? "border-red-500" : "border-purple-700"
+                errors.username ? "border-red-500" : "border-purple-700"
               } rounded-md p-3 focus:outline-none focus:ring-2 focus:ring-purple-500`}
-              placeholder="John Doe"
-              value={formData.name}
+              placeholder="musiclover123"
+              value={formData.username}
               onChange={handleChange}
+              disabled={isLoading}
             />
-            {errors.name && (
-              <p className="mt-1 text-red-400 text-xs">{errors.name}</p>
+            {errors.username && (
+              <p className="mt-1 text-red-400 text-xs">{errors.username}</p>
             )}
           </div>
 
@@ -112,6 +144,7 @@ const Signup: React.FC = () => {
               placeholder="your@email.com"
               value={formData.email}
               onChange={handleChange}
+              disabled={isLoading}
             />
             {errors.email && (
               <p className="mt-1 text-red-400 text-xs">{errors.email}</p>
@@ -136,11 +169,13 @@ const Signup: React.FC = () => {
                 placeholder="••••••••"
                 value={formData.password}
                 onChange={handleChange}
+                disabled={isLoading}
               />
               <button
                 type="button"
                 className="absolute right-3 top-3 text-purple-400"
                 onClick={() => setShowPassword(!showPassword)}
+                disabled={isLoading}
               >
                 {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
               </button>
@@ -167,6 +202,7 @@ const Signup: React.FC = () => {
               placeholder="••••••••"
               value={formData.confirmPassword}
               onChange={handleChange}
+              disabled={isLoading}
             />
             {errors.confirmPassword && (
               <p className="mt-1 text-red-400 text-xs">
@@ -177,9 +213,19 @@ const Signup: React.FC = () => {
 
           <button
             type="submit"
-            className="w-full bg-purple-600 hover:bg-purple-700 text-white font-medium py-3 px-4 rounded-md transition duration-200 ease-in-out"
+            className={`w-full bg-purple-600 hover:bg-purple-700 text-white font-medium py-3 px-4 rounded-md transition duration-200 ease-in-out flex justify-center items-center ${
+              isLoading ? "opacity-75 cursor-not-allowed" : ""
+            }`}
+            disabled={isLoading}
           >
-            Create Account
+            {isLoading ? (
+              <>
+                <Loader2 className="animate-spin mr-2 h-5 w-5" />
+                Creating Account...
+              </>
+            ) : (
+              "Create Account"
+            )}
           </button>
         </form>
 
