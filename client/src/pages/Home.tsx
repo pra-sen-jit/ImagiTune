@@ -27,20 +27,19 @@ const Home = () => {
                 mood and essence of your pictures.
               </p>
               <div className="flex flex-col sm:flex-row gap-4">
-            <Link
-              to="/how-it-works"
-               className="px-6 py-3 rounded-lg bg-white text-gray-900 font-medium hover:bg-gray-100 hover:shadow-md hover:scale-105 transition-all duration-300 flex items-center justify-center"
-              >
-            Learn More
-            </Link>
-            <Link
-              to="/signup"
-              className="px-6 py-3 rounded-lg bg-gradient-to-r from-purple-600 to-blue-600 text-white font-medium hover:from-purple-700 hover:to-blue-700 hover:shadow-md hover:scale-105 transition-all duration-300 flex items-center justify-center"
-            >
-             Get Started <ArrowRightIcon size={18} className="ml-2" />
-            </Link>
-            </div>
-
+                <Link
+                  to="/how-it-works"
+                  className="px-6 py-3 rounded-lg bg-white text-gray-900 font-medium hover:bg-gray-100 hover:shadow-md hover:scale-105 transition-all duration-300 flex items-center justify-center"
+                >
+                  Learn More
+                </Link>
+                <Link
+                  to="/signup"
+                  className="px-6 py-3 rounded-lg bg-gradient-to-r from-purple-600 to-blue-600 text-white font-medium hover:from-purple-700 hover:to-blue-700 hover:shadow-md hover:scale-105 transition-all duration-300 flex items-center justify-center"
+                >
+                  Get Started <ArrowRightIcon size={18} className="ml-2" />
+                </Link>
+              </div>
             </div>
             <div className="md:w-1/2">
               <div className="relative">
@@ -68,51 +67,65 @@ const Home = () => {
       </section>
       {/* How It Works Section */}
       <section className="bg-yellow-50 dark:bg-gray-800 py-20">
-  <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-    <div className="text-center mb-16">
-      <h2 className="text-3xl md:text-4xl font-bold mb-4">How ImagiTune Works</h2>
-      <p className="text-xl text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
-        Our advanced AI analyzes the visual elements of your images to create custom musical compositions.
-      </p>
-    </div>
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-      
-      {/* Step 1 */}
-      <div className="bg-white dark:bg-gray-900 p-8 rounded-xl shadow-sm border border-gray-100 dark:border-gray-800 transition-transform transform hover:scale-105 hover:shadow-lg duration-300">
-        <div className="w-12 h-12 bg-purple-100 dark:bg-purple-900/30 rounded-full flex items-center justify-center mb-6">
-          <ImageIcon size={24} className="text-purple-600 dark:text-purple-400" />
-        </div>
-        <h3 className="text-xl font-semibold mb-3">Upload Your Image</h3>
-        <p className="text-gray-600 dark:text-gray-400">
-          Upload any image you'd like to transform into music. Our AI works with landscapes, portraits, abstract art, and more.
-        </p>
-      </div>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl md:text-4xl font-bold mb-4">
+              How ImagiTune Works
+            </h2>
+            <p className="text-xl text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
+              Our advanced AI analyzes the visual elements of your images to
+              create custom musical compositions.
+            </p>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {/* Step 1 */}
+            <div className="bg-white dark:bg-gray-900 p-8 rounded-xl shadow-sm border border-gray-100 dark:border-gray-800 transition-transform transform hover:scale-105 hover:shadow-lg duration-300">
+              <div className="w-12 h-12 bg-purple-100 dark:bg-purple-900/30 rounded-full flex items-center justify-center mb-6">
+                <ImageIcon
+                  size={24}
+                  className="text-purple-600 dark:text-purple-400"
+                />
+              </div>
+              <h3 className="text-xl font-semibold mb-3">Upload Your Image</h3>
+              <p className="text-gray-600 dark:text-gray-400">
+                Upload any image you'd like to transform into music. Our AI
+                works with landscapes, portraits, abstract art, and more.
+              </p>
+            </div>
 
-      {/* Step 2 */}
-      <div className="bg-white dark:bg-gray-900 p-8 rounded-xl shadow-sm border border-gray-100 dark:border-gray-800 transition-transform transform hover:scale-105 hover:shadow-lg duration-300">
-        <div className="w-12 h-12 bg-blue-100 dark:bg-blue-900/30 rounded-full flex items-center justify-center mb-6">
-          <SparklesIcon size={24} className="text-blue-600 dark:text-blue-400" />
-        </div>
-        <h3 className="text-xl font-semibold mb-3">AI Analysis</h3>
-        <p className="text-gray-600 dark:text-gray-400">
-          Our powerful AI analyzes colors, shapes, composition, and emotional elements in your image to determine musical attributes.
-        </p>
-      </div>
+            {/* Step 2 */}
+            <div className="bg-white dark:bg-gray-900 p-8 rounded-xl shadow-sm border border-gray-100 dark:border-gray-800 transition-transform transform hover:scale-105 hover:shadow-lg duration-300">
+              <div className="w-12 h-12 bg-blue-100 dark:bg-blue-900/30 rounded-full flex items-center justify-center mb-6">
+                <SparklesIcon
+                  size={24}
+                  className="text-blue-600 dark:text-blue-400"
+                />
+              </div>
+              <h3 className="text-xl font-semibold mb-3">AI Analysis</h3>
+              <p className="text-gray-600 dark:text-gray-400">
+                Our powerful AI analyzes colors, shapes, composition, and
+                emotional elements in your image to determine musical
+                attributes.
+              </p>
+            </div>
 
-      {/* Step 3 */}
-      <div className="bg-white dark:bg-gray-900 p-8 rounded-xl shadow-sm border border-gray-100 dark:border-gray-800 transition-transform transform hover:scale-105 hover:shadow-lg duration-300">
-        <div className="w-12 h-12 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center mb-6">
-          <MusicIcon size={24} className="text-green-600 dark:text-green-400" />
+            {/* Step 3 */}
+            <div className="bg-white dark:bg-gray-900 p-8 rounded-xl shadow-sm border border-gray-100 dark:border-gray-800 transition-transform transform hover:scale-105 hover:shadow-lg duration-300">
+              <div className="w-12 h-12 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center mb-6">
+                <MusicIcon
+                  size={24}
+                  className="text-green-600 dark:text-green-400"
+                />
+              </div>
+              <h3 className="text-xl font-semibold mb-3">Receive Your Music</h3>
+              <p className="text-gray-600 dark:text-gray-400">
+                Download a unique musical composition that captures the essence
+                and emotion of your image in audio form.
+              </p>
+            </div>
+          </div>
         </div>
-        <h3 className="text-xl font-semibold mb-3">Receive Your Music</h3>
-        <p className="text-gray-600 dark:text-gray-400">
-          Download a unique musical composition that captures the essence and emotion of your image in audio form.
-        </p>
-      </div>
-
-    </div>
-  </div>
-</section>
+      </section>
 
       {/* Features Section */}
       <section className="py-20 bg-white dark:bg-gray-900">
@@ -211,8 +224,8 @@ const Home = () => {
             Ready to transform your images into music?
           </h2>
           <p className="text-xl text-purple-100 mb-8 max-w-2xl mx-auto">
-            Join thousands of creators who are already using AudioVision to
-            create unique musical experiences.
+            Join thousands of creators who are already using ImagiTune to create
+            unique musical experiences.
           </p>
           <Link
             to="/signup"

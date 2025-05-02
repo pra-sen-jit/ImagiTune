@@ -1,5 +1,4 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link } from "react-router-dom";
 import {
   ArrowRightIcon,
   ImageIcon,
@@ -9,7 +8,7 @@ import {
   BrainIcon,
   SmileIcon,
   HeadphonesIcon,
-} from 'lucide-react';
+} from "lucide-react";
 
 const HowItWorks = () => {
   return (
@@ -18,7 +17,7 @@ const HowItWorks = () => {
       <section className="bg-gradient-to-br from-gray-900 via-purple-900 to-gray-900 dark:from-black dark:via-purple-950 dark:to-black py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h1 className="text-4xl md:text-5xl font-bold text-white mb-6">
-            How AudioVision Works
+            How ImagiTune Works
           </h1>
           <p className="text-xl text-gray-300 max-w-3xl mx-auto">
             Our advanced AI technology transforms your images into unique
@@ -43,7 +42,10 @@ const HowItWorks = () => {
               {/* Step 1 */}
               <div className="bg-gray-50 dark:bg-gray-800 p-8 rounded-xl shadow-sm border border-gray-100 dark:border-gray-800 transition-transform transform hover:scale-105 hover:shadow-lg duration-300 relative z-10">
                 <div className="w-16 h-16 bg-purple-100 dark:bg-purple-900/30 rounded-full flex items-center justify-center mb-6 mx-auto">
-                  <ImageIcon size={32} className="text-purple-600 dark:text-purple-400" />
+                  <ImageIcon
+                    size={32}
+                    className="text-purple-600 dark:text-purple-400"
+                  />
                 </div>
                 <h3 className="text-xl font-semibold mb-3 text-center">
                   1. Upload Your Image
@@ -57,7 +59,10 @@ const HowItWorks = () => {
               {/* Step 2 */}
               <div className="bg-gray-50 dark:bg-gray-800 p-8 rounded-xl shadow-sm border border-gray-100 dark:border-gray-800 transition-transform transform hover:scale-105 hover:shadow-lg duration-300 relative z-10">
                 <div className="w-16 h-16 bg-blue-100 dark:bg-blue-900/30 rounded-full flex items-center justify-center mb-6 mx-auto">
-                  <BrainIcon size={32} className="text-blue-600 dark:text-blue-400" />
+                  <BrainIcon
+                    size={32}
+                    className="text-blue-600 dark:text-blue-400"
+                  />
                 </div>
                 <h3 className="text-xl font-semibold mb-3 text-center">
                   2. AI Analysis
@@ -71,7 +76,10 @@ const HowItWorks = () => {
               {/* Step 3 */}
               <div className="bg-gray-50 dark:bg-gray-800 p-8 rounded-xl shadow-sm border border-gray-100 dark:border-gray-800 transition-transform transform hover:scale-105 hover:shadow-lg duration-300 relative z-10">
                 <div className="w-16 h-16 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center mb-6 mx-auto">
-                  <MusicIcon size={32} className="text-green-600 dark:text-green-400" />
+                  <MusicIcon
+                    size={32}
+                    className="text-green-600 dark:text-green-400"
+                  />
                 </div>
                 <h3 className="text-xl font-semibold mb-3 text-center">
                   3. Generate Music
@@ -90,7 +98,9 @@ const HowItWorks = () => {
       <section className="py-20 bg-gray-50 dark:bg-gray-800">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold mb-4">The Technology</h2>
+            <h2 className="text-3xl md:text-4xl font-bold mb-4">
+              The Technology
+            </h2>
             <p className="text-xl text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
               How our AI converts visual data into musical elements.
             </p>
@@ -103,11 +113,16 @@ const HowItWorks = () => {
                 <div className="flex">
                   <div className="mr-4">
                     <div className="w-10 h-10 bg-purple-100 dark:bg-purple-900/30 rounded-full flex items-center justify-center">
-                      <WandIcon size={20} className="text-purple-600 dark:text-purple-400" />
+                      <WandIcon
+                        size={20}
+                        className="text-purple-600 dark:text-purple-400"
+                      />
                     </div>
                   </div>
                   <div>
-                    <h4 className="text-lg font-medium mb-2">Color Processing</h4>
+                    <h4 className="text-lg font-medium mb-2">
+                      Color Processing
+                    </h4>
                     <p className="text-gray-600 dark:text-gray-400">
                       Colors are mapped to musical keys and tonal qualities.
                       Warm colors like red and orange create major keys and
@@ -119,11 +134,16 @@ const HowItWorks = () => {
                 <div className="flex">
                   <div className="mr-4">
                     <div className="w-10 h-10 bg-blue-100 dark:bg-blue-900/30 rounded-full flex items-center justify-center">
-                      <SparklesIcon size={20} className="text-blue-600 dark:text-blue-400" />
+                      <SparklesIcon
+                        size={20}
+                        className="text-blue-600 dark:text-blue-400"
+                      />
                     </div>
                   </div>
                   <div>
-                    <h4 className="text-lg font-medium mb-2">Pattern Recognition</h4>
+                    <h4 className="text-lg font-medium mb-2">
+                      Pattern Recognition
+                    </h4>
                     <p className="text-gray-600 dark:text-gray-400">
                       Our AI identifies patterns, shapes, and compositional
                       elements that influence rhythm, tempo, and musical
@@ -134,11 +154,16 @@ const HowItWorks = () => {
                 <div className="flex">
                   <div className="mr-4">
                     <div className="w-10 h-10 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center">
-                      <SmileIcon size={20} className="text-green-600 dark:text-green-400" />
+                      <SmileIcon
+                        size={20}
+                        className="text-green-600 dark:text-green-400"
+                      />
                     </div>
                   </div>
                   <div>
-                    <h4 className="text-lg font-medium mb-2">Emotional Analysis</h4>
+                    <h4 className="text-lg font-medium mb-2">
+                      Emotional Analysis
+                    </h4>
                     <p className="text-gray-600 dark:text-gray-400">
                       The AI evaluates the emotional quality of the image
                       through color psychology and composition, translating
@@ -156,11 +181,16 @@ const HowItWorks = () => {
                 <div className="flex">
                   <div className="mr-4">
                     <div className="w-10 h-10 bg-purple-100 dark:bg-purple-900/30 rounded-full flex items-center justify-center">
-                      <MusicIcon size={20} className="text-purple-600 dark:text-purple-400" />
+                      <MusicIcon
+                        size={20}
+                        className="text-purple-600 dark:text-purple-400"
+                      />
                     </div>
                   </div>
                   <div>
-                    <h4 className="text-lg font-medium mb-2">Melody Creation</h4>
+                    <h4 className="text-lg font-medium mb-2">
+                      Melody Creation
+                    </h4>
                     <p className="text-gray-600 dark:text-gray-400">
                       Based on the image analysis, our AI composes a melody that
                       reflects the dominant visual elements and emotional
@@ -171,11 +201,16 @@ const HowItWorks = () => {
                 <div className="flex">
                   <div className="mr-4">
                     <div className="w-10 h-10 bg-blue-100 dark:bg-blue-900/30 rounded-full flex items-center justify-center">
-                      <SparklesIcon size={20} className="text-blue-600 dark:text-blue-400" />
+                      <SparklesIcon
+                        size={20}
+                        className="text-blue-600 dark:text-blue-400"
+                      />
                     </div>
                   </div>
                   <div>
-                    <h4 className="text-lg font-medium mb-2">Harmonic Structure</h4>
+                    <h4 className="text-lg font-medium mb-2">
+                      Harmonic Structure
+                    </h4>
                     <p className="text-gray-600 dark:text-gray-400">
                       The AI builds a harmonic framework based on color
                       relationships in the image, creating chord progressions
@@ -186,11 +221,16 @@ const HowItWorks = () => {
                 <div className="flex">
                   <div className="mr-4">
                     <div className="w-10 h-10 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center">
-                      <HeadphonesIcon size={20} className="text-green-600 dark:text-green-400" />
+                      <HeadphonesIcon
+                        size={20}
+                        className="text-green-600 dark:text-green-400"
+                      />
                     </div>
                   </div>
                   <div>
-                    <h4 className="text-lg font-medium mb-2">Instrumentation</h4>
+                    <h4 className="text-lg font-medium mb-2">
+                      Instrumentation
+                    </h4>
                     <p className="text-gray-600 dark:text-gray-400">
                       The system selects appropriate instruments and timbres
                       based on the texture, detail, and style of the image to
@@ -208,7 +248,9 @@ const HowItWorks = () => {
       <section className="py-20 bg-white dark:bg-gray-900">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold mb-4">See It In Action</h2>
+            <h2 className="text-3xl md:text-4xl font-bold mb-4">
+              See It In Action
+            </h2>
             <p className="text-xl text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
               Experience the transformation from image to music with our
               interactive demo.
@@ -246,7 +288,10 @@ const HowItWorks = () => {
                         </p>
                       </div>
                       <button className="p-2 rounded-full bg-gray-100 dark:bg-gray-800">
-                        <MusicIcon size={20} className="text-purple-600 dark:text-purple-400" />
+                        <MusicIcon
+                          size={20}
+                          className="text-purple-600 dark:text-purple-400"
+                        />
                       </button>
                     </div>
                     <div className="mt-4 h-2 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
