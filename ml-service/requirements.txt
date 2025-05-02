@@ -1,0 +1,11 @@
+fastapi
+uvicorn
+python-multipart
+numpy
+opencv-python
+music21
+midi2audio
+fluid-synth
+python-decouple
+pydantic
+python-magic
