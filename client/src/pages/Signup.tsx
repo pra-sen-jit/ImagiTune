@@ -65,7 +65,7 @@ const Signup: React.FC = () => {
           <div className="flex justify-center mb-3">
             <Music size={36} className="text-purple-400" />
           </div>
-          <h1 className="text-3xl font-bold text-white">Join AudioVision</h1>
+          <h1 className="text-3xl font-bold text-white">Join ImagiTune</h1>
           <p className="text-purple-300 mt-2">
             Transform your images into musical experiences
           </p>

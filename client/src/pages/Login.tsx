@@ -24,7 +24,7 @@ const Login: React.FC = () => {
     <div className="min-h-screen bg-gradient-to-br from-black via-purple-900 to-black flex flex-col justify-center items-center p-4">
       <div className="max-w-md w-full bg-gray-900 bg-opacity-70 backdrop-blur-sm rounded-lg shadow-xl p-8">
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-white">AudioVision</h1>
+          <h1 className="text-3xl font-bold text-white">ImagiTune</h1>
           <p className="text-purple-300 mt-2">Sign in to your account</p>
         </div>
 
