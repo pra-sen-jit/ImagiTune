@@ -231,7 +231,7 @@ const Home = () => {
             to="/signup"
             className="inline-block px-8 py-4 rounded-lg bg-white text-gray-900 font-medium hover:bg-gray-100 transition-colors"
           >
-            Get Started for Free
+            Get Started
           </Link>
         </div>
       </section>
