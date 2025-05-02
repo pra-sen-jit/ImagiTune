@@ -1,14 +1,25 @@
 const errorHandler = (err, req, res, next) => {
-  const statusCode = res.statusCode ? res.statusCode : 500;
+  // Determine status code (prefer err.status or default to 500)
+  const statusCode = err.status || err.statusCode || 500;
 
+  // Set response status
   res.status(statusCode);
 
-  res.json({
-    message: err.message,
-    stack: process.env.NODE_ENV === "production" ? null : err.stack,
-  });
+  // Prepare error response
+  const errorResponse = {
+    message: err.message || "Something went wrong",
+    ...(process.env.NODE_ENV !== "production" && {
+      stack: err.stack,
+      details: err.details, // Optional: add any additional error details
+    }),
+  };
+
+  // Send JSON response
+  res.json(errorResponse);
 };
 
-module.exports = {
-  errorHandler,
-};
+// For CommonJS (standard in Node.js/Express)
+module.exports = errorHandler;
+
+// OR for ES Modules (if using type: "module" in package.json)
+// export default errorHandler;
