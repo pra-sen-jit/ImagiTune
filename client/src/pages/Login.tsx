@@ -29,8 +29,8 @@ const Login: React.FC = () => {
     try {
       const { token, user } = await AuthService.login({ email, password });
       login(token, user); // Update auth context
-      navigate("/dashboard"); // Redirect to dashboard
-    } catch (err) {
+      navigate("/");
+    } catch (err: any) {
       setError(err.message || "Login failed. Please try again.");
     } finally {
       setIsLoading(false);

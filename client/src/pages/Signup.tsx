@@ -74,7 +74,7 @@ const Signup: React.FC = () => {
       });
 
       login(token, user); // Update auth context
-      navigate("/dashboard"); // Redirect to dashboard
+      navigate("/");
     } catch (error: any) {
       console.error("Signup error:", error);
       setApiError(error.message || "Signup failed. Please try again.");
