@@ -1,11 +1,20 @@
-require("dotenv").config({ path: "./.env" });
-import musicRoutes from "./routes/musicRoutes";
+import dotenv from "dotenv";
+dotenv.config({ path: "./.env" });
 
-const express = require("express");
-const mongoose = require("mongoose");
-const cors = require("cors");
-const path = require("path");
-const errorHandler = require("./middleware/errorMiddleware");
+// require("dotenv").config({ path: "./.env" });
+import musicRoutes from "./routes/musicRoutes.js";
+import authRoutes from "./routes/authRoutes.js";
+import { dirname } from "path";
+import { fileURLToPath } from "url";
+
+import express from "express";
+import cors from "cors";
+import mongoose from "mongoose";
+import path from "path";
+import errorHandler from "./middleware/errorMiddleware.js";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 // Validate critical environment variables
 const requiredEnvVars = ["MONGO_URI", "JWT_SECRET", "CLOUDINARY_CLOUD_NAME"];
@@ -20,27 +29,29 @@ requiredEnvVars.forEach((varName) => {
 
 const app = express();
 
-// Middleware
-app.use(
-  cors({
-    origin:
-      process.env.NODE_ENV === "production"
-        ? "https://your-frontend-domain.com"
-        : "http://localhost:5174",
-    credentials: true,
-  })
-);
-app.use(express.json({ limit: "10mb" }));
-app.use(express.urlencoded({ extended: false }));
+// Create a CORS options object
+const corsOptions = {
+  origin:
+    process.env.NODE_ENV === "production"
+      ? "https://your-frontend-domain.com"
+      : "http://localhost:5174",
+  credentials: true,
+  allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With"],
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+};
+
+// Apply CORS middleware
+app.use(cors(corsOptions));
+
+// Explicitly handle OPTIONS requests
+app.options("*", cors(corsOptions)); // ⚠️ Crucial fix
 app.use("/api/music", musicRoutes);
 
 // Static files
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 // Routes
-app.use("/api/auth", require("./routes/authRoutes"));
-// app.use("/api/users", require("./routes/userRoutes"));
-// app.use("/api/music", require("./routes/imageToMusicRoutes"));
+app.use("/api/auth", express.json(), authRoutes);
 
 // Error handling
 app.use(errorHandler);
@@ -87,4 +98,4 @@ process.on("SIGTERM", () => {
   });
 });
 
-module.exports = server;
+export default server;

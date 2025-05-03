@@ -1,11 +1,11 @@
-const User = require("../models/User");
-const asyncHandler = require("express-async-handler");
-const generateToken = require("../utils/generateToken");
+import User from "../models/User.js";
+import asyncHandler from "express-async-handler";
+import generateToken from "../utils/generateToken.js";
 
 // @desc    Register a new user
 // @route   POST /api/auth/register
 // @access  Public
-const registerUser = asyncHandler(async (req, res) => {
+export const registerUser = asyncHandler(async (req, res) => {
   const { username, email, password } = req.body;
 
   const userExists = await User.findOne({ email });
@@ -36,7 +36,7 @@ const registerUser = asyncHandler(async (req, res) => {
 // @desc    Authenticate user & get token
 // @route   POST /api/auth/login
 // @access  Public
-const loginUser = asyncHandler(async (req, res) => {
+export const loginUser = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
 
   const user = await User.findOne({ email }).select("+password");
@@ -57,7 +57,7 @@ const loginUser = asyncHandler(async (req, res) => {
 // @desc    Get user profile
 // @route   GET /api/auth/profile
 // @access  Private
-const getUserProfile = asyncHandler(async (req, res) => {
+export const getUserProfile = asyncHandler(async (req, res) => {
   const user = await User.findById(req.user._id);
 
   if (user) {
@@ -72,9 +72,3 @@ const getUserProfile = asyncHandler(async (req, res) => {
     throw new Error("User not found");
   }
 });
-
-module.exports = {
-  registerUser,
-  loginUser,
-  getUserProfile,
-};

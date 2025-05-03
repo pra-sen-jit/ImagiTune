@@ -10,6 +10,7 @@ app.add_middleware(
     CORSMiddleware,
     allow_origins=[
         "http://localhost:5174",  # Vite dev server
+        "http://localhost:5000",
         "https://your-production-domain.com"  # Add production domain
     ],
     allow_credentials=True,
@@ -21,7 +22,7 @@ app.add_middleware(
 app.mount("/static", StaticFiles(directory="app/static"), name="static")
 
 # Include routes
-app.include_router(music.router, prefix="/api/v1/music", tags=["music"])
+app.include_router(music.router, prefix="/music", tags=["music"])
 
 @app.get("/health")
 async def health_check():

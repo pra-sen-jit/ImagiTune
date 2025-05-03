@@ -22,6 +22,7 @@ interface LoginData {
 interface AuthResponse {
   token: string;
   user: User;
+  _id: string;
 }
 
 export const AuthService = {
@@ -40,6 +41,7 @@ export const AuthService = {
   async login(loginData: LoginData): Promise<AuthResponse> {
     try {
       const response = await api.post<AuthResponse>("/auth/login", loginData);
+      localStorage.setItem("userId", response.data._id);
       localStorage.setItem("authToken", response.data.token);
       return response.data;
     } catch (error: any) {
@@ -64,6 +66,7 @@ export const AuthService = {
   logout(): void {
     try {
       localStorage.removeItem("authToken");
+      localStorage.removeItem("userId");
       // Optional: Add API call to invalidate token on server if needed
       // await api.post("/auth/logout");
     } catch (error) {

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   Upload as UploadIcon,
@@ -13,12 +13,12 @@ import {
 } from "lucide-react";
 
 const Upload = () => {
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const [dragActive, setDragActive] = useState(false);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [processing, setProcessing] = useState(false);
   const navigate = useNavigate();
 
-  // Music settings state
   const [settings, setSettings] = useState({
     dominant: "Acoustic Grand Piano",
     scaleType: "Major",
@@ -27,7 +27,15 @@ const Upload = () => {
     bpmMult: 1.0,
     rhythmComplexity: 0.5,
   });
+  useEffect(() => {
+    if (selectedImage) {
+      console.log(selectedImage);
+    } else {
+      console.log("No image selected");
+    }
+  });
 
+  // File handling functions
   const handleDrag = (e: React.DragEvent) => {
     e.preventDefault();
     e.stopPropagation();
@@ -42,45 +50,63 @@ const Upload = () => {
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    e.target.files?.[0] && handleFiles(e.target.files[0]);
+    if (e.target.files?.[0]) handleFiles(e.target.files[0]);
   };
 
   const handleFiles = (file: File) => {
-    if (file.size > 10 * 1024 * 1024) {
+    console.log("File");
+    const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
+    if (file.size > MAX_FILE_SIZE) {
       alert("File size exceeds 10MB limit");
       return;
     }
 
     const reader = new FileReader();
-    reader.onload = (e) =>
-      e.target?.result && setSelectedImage(e.target.result as string);
+    reader.onload = (e) => {
+      if (e.target?.result) {
+        setSelectedImage(e.target.result as string);
+        console.log(selectedImage);
+      }
+    };
     reader.readAsDataURL(file);
   };
 
+  // Submission handler
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!selectedImage) return;
 
-    const inputFile = document.getElementById(
-      "file-upload"
-    ) as HTMLInputElement;
-    const file = inputFile.files?.[0];
-    if (!file) return;
+    if (!selectedImage) {
+      alert("Please select an image first");
+      return;
+    }
 
+    // if (!fileInputRef.current?.files?.length) {
+    //   alert("No file selected");
+    //   return;
+    // }
+
+    const file = selectedImage;
     setProcessing(true);
 
     try {
       const formData = new FormData();
       formData.append("image", file);
       formData.append("settings", JSON.stringify(settings));
+      let userId = localStorage.getItem("userId");
+      if (userId) {
+        formData.append("userId", JSON.stringify(userId));
+      }
 
-      const response = await fetch(
-        "http://localhost:8000/api/v1/music/generate",
-        {
-          method: "POST",
-          body: formData,
-        }
-      );
+      const response = await fetch("http://localhost:5000/api/music/generate", {
+        method: "POST",
+        body: formData,
+        credentials: "include", // Send cookies/auth tokens
+        headers: {
+          // Add authorization header if using JWT
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
+      console.log("Response:", response);
 
       if (!response.ok) {
         const error = await response.json();
@@ -108,7 +134,12 @@ const Upload = () => {
     }
   };
 
-  const clearImage = () => setSelectedImage(null);
+  const clearImage = () => {
+    setSelectedImage(null);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
+  };
 
   return (
     <div className="py-12 min-h-screen bg-gradient-to-br from-black via-purple-900 to-black">
@@ -147,6 +178,7 @@ const Upload = () => {
                         <span className="font-medium">Select image</span>
                         <input
                           id="file-upload"
+                          ref={fileInputRef}
                           type="file"
                           className="sr-only"
                           accept="image/*"

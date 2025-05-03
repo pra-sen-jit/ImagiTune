@@ -1,25 +1,32 @@
-import { generateMusicFromImage } from "../services/mlServiceClient";
-import MusicGeneration from "../models/MusicGeneration";
+import { generateMusicFromImage } from "../services/mlServiceClient.js";
+import MusicGeneration from "../models/MusicGeneration.js";
 
 export const createMusicGeneration = async (req, res) => {
-  try {
-    if (!req.file) {
-      return res.status(400).json({ error: "No image file provided" });
-    }
+  let data = req.body;
+  console.log("hello");
+  console.log(data);
 
-    // Process with ML service
+  try {
+    const imageFile = data.image; // From Multer
+    const settings = data.settings; // Already parsed
+    const userId = data.userId; // From auth middleware
+
+    // if (!imageFile) {
+    //   return res.status(400).json({ error: "No image file provided" });
+    // }
+
     const result = await generateMusicFromImage(
-      req.file,
-      req.body.settings,
-      req.user._id
+      imageFile, // ✅ Correct file reference
+      settings,
+      userId // ✅ Correct user ID
     );
 
     // Save generation record
     const generation = new MusicGeneration({
-      user: req.user._id,
-      imageUrl: req.file.path,
+      user: data.userId,
+      imageUrl: data.file.path,
       audioUrl: result.audio_url,
-      settings: req.body.settings,
+      settings: settings,
     });
 
     await generation.save();
@@ -41,7 +48,7 @@ export const createMusicGeneration = async (req, res) => {
 
 export const getUserGenerations = async (req, res) => {
   try {
-    const generations = await MusicGeneration.find({ user: req.user._id })
+    const generations = await MusicGeneration.find({ user: data.userId })
       .sort("-createdAt")
       .lean();
 

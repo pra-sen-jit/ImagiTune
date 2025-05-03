@@ -18,6 +18,9 @@ music_generator = MusicGenerator(SOUNDFONT_PATH)
 # Configure logging
 logger = logging.getLogger(__name__)
 
+# Define maximum file size as a constant
+MAX_FILE_SIZE = 10 * 1024 * 1024  # 10MB limit
+
 @router.post(
     "/generate", 
     response_model=MusicResponse,
@@ -33,8 +36,8 @@ logger = logging.getLogger(__name__)
 async def generate_music(
     image: UploadFile = File(..., description="Image file to analyze (JPG/PNG)"),
     settings: Optional[MusicSettings] = None,
-    max_file_size: int = 10 * 1024 * 1024  # 10MB limit
 ):
+    print("I am here")
     try:
         # Validate file type
         if not image.content_type.startswith('image/'):
@@ -52,10 +55,10 @@ async def generate_music(
 
         # Read image data with size check
         image_data = await image.read()
-        if len(image_data) > max_file_size:
+        if len(image_data) > MAX_FILE_SIZE:
             raise HTTPException(
                 status_code=status.HTTP_413_REQUEST_ENTITY_TOO_LARGE,
-                detail=f"File exceeds maximum size of {max_file_size} bytes"
+                detail=f"File exceeds maximum size of {MAX_FILE_SIZE} bytes"
             )
 
         logger.info(f"Starting music generation for request {request_id}")

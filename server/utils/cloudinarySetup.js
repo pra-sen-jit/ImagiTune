@@ -1,5 +1,5 @@
-const cloudinary = require("cloudinary").v2;
-const fs = require("fs");
+import { v2 as cloudinary } from "cloudinary";
+import fs from "fs";
 
 // Configure Cloudinary
 cloudinary.config({
@@ -28,4 +28,4 @@ const uploadToCloudinary = async (filePath, folder) => {
   }
 };
 
-module.exports = { uploadToCloudinary };
+export default { uploadToCloudinary };

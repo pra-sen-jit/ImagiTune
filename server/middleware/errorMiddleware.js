@@ -18,8 +18,4 @@ const errorHandler = (err, req, res, next) => {
   res.json(errorResponse);
 };
 
-// For CommonJS (standard in Node.js/Express)
-module.exports = errorHandler;
-
-// OR for ES Modules (if using type: "module" in package.json)
-// export default errorHandler;
+export default errorHandler;
