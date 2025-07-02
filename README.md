@@ -31,3 +31,6 @@ After execution, you'll get:
 - A MIDI representation (`generated_music.mid`)
 - A WAV audio version (`generated_music.wav`)
 - An MP3 file with normalization and reverb effects (`generated_music.mp3`)
+
+## Backend (Planned)
+A Node.js/Express backend will be added to handle authentication and user management, using MongoDB for data storage.
