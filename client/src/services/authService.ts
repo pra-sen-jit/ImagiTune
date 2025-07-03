@@ -28,11 +28,13 @@ interface AuthResponse {
 export const AuthService = {
   async signup(userData: UserData): Promise<AuthResponse> {
     try {
-      const response = await api.post<AuthResponse>("/auth/register", userData);
+      const response = await api.post<AuthResponse>("/auth/signup", userData);
       localStorage.setItem("authToken", response.data.token);
       return response.data;
     } catch (error: any) {
-      const errorMessage = error.response?.data?.message || "Signup failed";
+      const errorMessage = error.response?.data?.error || 
+                        error.response?.data?.message || 
+                        "Signup failed";
       console.error("Signup error:", errorMessage);
       throw new Error(errorMessage);
     }
@@ -41,11 +43,12 @@ export const AuthService = {
   async login(loginData: LoginData): Promise<AuthResponse> {
     try {
       const response = await api.post<AuthResponse>("/auth/login", loginData);
-      localStorage.setItem("userId", response.data._id);
       localStorage.setItem("authToken", response.data.token);
       return response.data;
     } catch (error: any) {
-      const errorMessage = error.response?.data?.message || "Login failed";
+      const errorMessage = error.response?.data?.error || 
+                        error.response?.data?.message || 
+                        "Login failed";
       console.error("Login error:", errorMessage);
       throw new Error(errorMessage);
     }

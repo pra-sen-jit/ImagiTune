@@ -32,9 +32,25 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [token, setToken] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-
+  
   useEffect(() => {
-    checkAuth();
+    const verifyToken = async () => {
+      setIsLoading(true);
+      const storedToken = localStorage.getItem("authToken");
+      
+      if (storedToken) {
+        try {
+          const userData = await AuthService.getProfile();
+          setToken(storedToken);
+          setUser(userData);
+        } catch (error) {
+          logout();
+        }
+      }
+      setIsLoading(false);
+    };
+    
+    verifyToken();
   }, []);
 
   const checkAuth = async () => {

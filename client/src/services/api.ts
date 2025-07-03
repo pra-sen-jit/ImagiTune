@@ -1,3 +1,4 @@
+// src/services/api.ts
 import axios from "axios";
 
 const API_BASE_URL =
@@ -27,12 +28,20 @@ api.interceptors.request.use(
 
 // Response interceptor
 api.interceptors.response.use(
-  (response) => response,
-  (error) => {
+  response => {
+    console.log('API Success:', response.config.url);
+    return response;
+  },
+  error => {
+    console.error('API Error:', {
+      url: error.config.url,
+      status: error.response?.status,
+      error: error.response?.data
+    });
+    
     if (error.response?.status === 401) {
-      // Handle unauthorized access (token expired)
-      localStorage.removeItem("authToken");
-      window.location.href = "/login"; // Redirect to login
+      localStorage.removeItem('authToken');
+      window.location.href = '/login?session_expired=1';
     }
     return Promise.reject(error);
   }

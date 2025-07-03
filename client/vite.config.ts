@@ -5,7 +5,7 @@ import react from "@vitejs/plugin-react";
 export default defineConfig({
   plugins: [react()],
   server: {
-    port: 5174, // Must match CORS origin
+    port: parseInt(process.env.VITE_FRONTEND_PORT || '5174'),
     strictPort: true,
   },
 });

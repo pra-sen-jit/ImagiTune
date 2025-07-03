@@ -1,4 +1,5 @@
-import React, {
+// src/components/ThemeProvider.tsx
+import {
   createContext,
   useContext,
   useEffect,
