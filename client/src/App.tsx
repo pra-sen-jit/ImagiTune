@@ -10,6 +10,7 @@ import Results from "./pages/Results";
 import Contact from "./pages/Contact";
 import Signup from "./pages/Signup";
 import Login from "./pages/Login";
+import Profile from "./pages/Profile";
 
 export function App() {
   return (
@@ -24,6 +25,7 @@ export function App() {
             <Route path="contact" element={<Contact />} />
             <Route path="signup" element={<Signup />} />
             <Route path="login" element={<Login />} />
+            <Route path="profile" element={<Profile />} />
             {/* Protected routes */}
             <Route element={<ProtectedRoute />}>
               <Route path="upload" element={<Uploads />} />
