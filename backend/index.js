@@ -23,6 +23,7 @@ app.get('/api/health', (req, res) => {
 });
 
 app.use('/api/auth', authRouter);
+app.use('/uploads', express.static('backend/uploads'));
 
 const PORT = process.env.PORT || 5000;
 

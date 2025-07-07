@@ -90,4 +90,21 @@ export const AuthService = {
       throw new Error(errorMessage);
     }
   },
+
+  async updateProfile(profileData: { fullName?: string; contact?: string; dob?: string; avatar?: File | null }): Promise<User> {
+    try {
+      const formData = new FormData();
+      if (profileData.fullName) formData.append('fullName', profileData.fullName);
+      if (profileData.contact) formData.append('contact', profileData.contact);
+      if (profileData.dob) formData.append('dob', profileData.dob);
+      if (profileData.avatar) formData.append('avatar', profileData.avatar);
+      const response = await api.put<User>("/auth/profile", formData, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+      });
+      return response.data;
+    } catch (error: any) {
+      const errorMessage = error.response?.data?.message || "Profile update failed";
+      throw new Error(errorMessage);
+    }
+  },
 };

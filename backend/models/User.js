@@ -17,6 +17,10 @@ const userSchema = new mongoose.Schema({
     required: [true, 'Password is required'],
     minlength: [6, 'Password must be at least 6 characters']
   },
+  fullName: { type: String },
+  contact: { type: String },
+  dob: { type: Date },
+  avatar: { type: String }, // URL to profile picture
 }, { timestamps: true });
 
 const User = mongoose.model('User', userSchema);

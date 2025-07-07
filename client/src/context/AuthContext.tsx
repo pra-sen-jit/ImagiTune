@@ -12,6 +12,9 @@ interface User {
   username: string;
   email: string;
   avatar?: string;
+  fullName?: string;
+  contact?: string;
+  dob?: string;
   createdAt?: Date;
   updatedAt?: Date;
 }

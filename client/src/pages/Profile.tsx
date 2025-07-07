@@ -1,18 +1,27 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useAuth } from "../context/AuthContext";
+import { AuthService } from "../services/authService";
 
 const Profile = () => {
-  const { user } = useAuth();
-  const [fullName, setFullName] = useState("");
-  const [contact, setContact] = useState("");
-  const [contactError, setContactError] = useState("");
-  const [dob, setDob] = useState("");
+  const { user, login } = useAuth();
+  const [fullName, setFullName] = useState(user?.fullName || "");
+  const [contact, setContact] = useState(user?.contact || "");
+  const [dob, setDob] = useState(user?.dob ? user.dob.slice(0, 10) : "");
   const [avatar, setAvatar] = useState<string | undefined>(user?.avatar);
   const [avatarFile, setAvatarFile] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
+  const [contactError, setContactError] = useState("");
+  const [successMsg, setSuccessMsg] = useState("");
+  const [errorMsg, setErrorMsg] = useState("");
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // Handle avatar file selection
+  useEffect(() => {
+    setFullName(user?.fullName || "");
+    setContact(user?.contact || "");
+    setDob(user?.dob ? user.dob.slice(0, 10) : "");
+    setAvatar(user?.avatar);
+  }, [user]);
+
   const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
@@ -22,7 +31,7 @@ const Profile = () => {
   };
 
   const handleContactChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value.replace(/\D/g, ""); // Only digits
+    const value = e.target.value.replace(/\D/g, "");
     setContact(value);
     if (value.length > 0 && value.length !== 10) {
       setContactError("Contact number should be exactly 10 digits");
@@ -31,11 +40,28 @@ const Profile = () => {
     }
   };
 
-  // Placeholder for save handler
-  const handleSave = (e: React.FormEvent) => {
+  const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
-    // TODO: Implement save logic (API call)
-    alert("Profile updated (not yet implemented)");
+    setSuccessMsg("");
+    setErrorMsg("");
+    if (contact.length !== 10) {
+      setContactError("Contact number should be exactly 10 digits");
+      return;
+    }
+    try {
+      const updated = await AuthService.updateProfile({
+        fullName,
+        contact,
+        dob,
+        avatar: avatarFile,
+      });
+      setAvatar(updated.avatar);
+      setPreview(null);
+      setSuccessMsg("Profile updated successfully!");
+      login(localStorage.getItem("authToken") || "", updated); // update context
+    } catch (err: any) {
+      setErrorMsg(err.message || "Failed to update profile");
+    }
   };
 
   return (
@@ -45,7 +71,7 @@ const Profile = () => {
         <div className="flex flex-col items-center">
           <div className="relative w-32 h-32 mb-2">
             <img
-              src={preview || avatar || "/default-avatar.png"}
+              src={preview || (avatar ? avatar : "/default-avatar.png")}
               alt="Profile"
               className="w-32 h-32 rounded-full object-cover border-4 border-purple-500 shadow"
             />
@@ -110,6 +136,8 @@ const Profile = () => {
             className="w-full px-4 py-2 rounded border bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
           />
         </div>
+        {successMsg && <p className="text-green-500 text-center">{successMsg}</p>}
+        {errorMsg && <p className="text-red-500 text-center">{errorMsg}</p>}
         <button
           type="submit"
           className="w-full py-2 px-4 rounded bg-gradient-to-r from-purple-600 to-blue-600 text-white font-semibold hover:from-purple-700 hover:to-blue-700 transition-colors"

@@ -2,8 +2,25 @@ import express from 'express';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import User from '../models/User.js';
+import multer from 'multer';
+import path from 'path';
+import fs from 'fs';
 
 const router = express.Router();
+
+// Multer setup for avatar uploads
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    const uploadPath = path.join('backend', 'uploads', 'avatars');
+    fs.mkdirSync(uploadPath, { recursive: true });
+    cb(null, uploadPath);
+  },
+  filename: function (req, file, cb) {
+    const ext = path.extname(file.originalname);
+    cb(null, `${req.user.id}_${Date.now()}${ext}`);
+  }
+});
+const upload = multer({ storage });
 
 // Middleware to protect routes
 export const authMiddleware = async (req, res, next) => {
@@ -124,6 +141,40 @@ router.post('/login', async (req, res) => {
       message: 'Server error',
       error: process.env.NODE_ENV === 'development' ? err.message : null
     });
+  }
+});
+
+// Get user profile
+router.get('/profile', authMiddleware, async (req, res) => {
+  try {
+    const user = await User.findById(req.user._id).select('-password');
+    if (!user) return res.status(404).json({ message: 'User not found' });
+    res.json(user);
+  } catch (err) {
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
+// Update user profile (with avatar upload)
+router.put('/profile', authMiddleware, upload.single('avatar'), async (req, res) => {
+  try {
+    const updateFields = {
+      fullName: req.body.fullName,
+      contact: req.body.contact,
+      dob: req.body.dob,
+    };
+    if (req.file) {
+      // Store avatar as a URL (assuming static serving from /uploads/avatars)
+      updateFields.avatar = `/uploads/avatars/${req.file.filename}`;
+    }
+    const user = await User.findByIdAndUpdate(
+      req.user._id,
+      { $set: updateFields },
+      { new: true }
+    ).select('-password');
+    res.json(user);
+  } catch (err) {
+    res.status(500).json({ message: 'Server error' });
   }
 });
 
