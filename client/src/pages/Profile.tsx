@@ -90,7 +90,7 @@ const Profile = () => {
         <div className="flex flex-col items-center mb-8">
           <div className="relative w-28 h-28 mb-3">
             <img
-              src={preview || (avatar ? avatar : "/default-avatar.png")}
+              src={preview || (avatar ? `http://localhost:5000${avatar}` : "/default-avatar.png")}
               alt="Profile"
               className="w-28 h-28 rounded-full object-cover border-4 border-white shadow-lg"
             />

@@ -11,7 +11,7 @@ const router = express.Router();
 // Multer setup for avatar uploads
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    const uploadPath = path.join('backend', 'uploads', 'avatars');
+    const uploadPath = path.join('uploads', 'avatars');
     fs.mkdirSync(uploadPath, { recursive: true });
     cb(null, uploadPath);
   },

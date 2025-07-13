@@ -9,6 +9,7 @@ lerna-debug.log*
 
 .env
 node_modules
+uploads
 venv
 static
 __pycache__
