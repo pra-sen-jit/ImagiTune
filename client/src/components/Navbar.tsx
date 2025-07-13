@@ -9,6 +9,7 @@ import {
   XIcon,
   LogOutIcon,
   User,
+  Settings,
 } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
@@ -89,9 +90,28 @@ const Navbar = () => {
 
                 <DropdownMenu.Portal>
                   <DropdownMenu.Content
-                    className="min-w-[200px] bg-white dark:bg-gray-800 rounded-md shadow-lg p-1"
+                    className="min-w-[220px] bg-white dark:bg-gray-800 rounded-md shadow-lg p-1"
                     sideOffset={5}
                   >
+                    {/* User Info Section */}
+                    <div className="px-4 py-3 border-b border-gray-200 dark:border-gray-700">
+                      <div className="text-sm font-medium text-gray-900 dark:text-gray-100">
+                        {user?.fullName || user?.username}
+                      </div>
+                      <div className="text-xs text-gray-500 dark:text-gray-400 truncate">
+                        {user?.email}
+                      </div>
+                    </div>
+                    
+                    {/* Actions Section */}
+                    <DropdownMenu.Item
+                      className="flex items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md cursor-pointer"
+                      onClick={() => navigate("/profile")}
+                    >
+                      <Settings className="mr-2 h-4 w-4" />
+                      Profile
+                    </DropdownMenu.Item>
+                    
                     <DropdownMenu.Item
                       className="flex items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md cursor-pointer"
                       onClick={handleLogout}
