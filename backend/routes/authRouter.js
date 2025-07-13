@@ -43,23 +43,23 @@ export const authMiddleware = async (req, res, next) => {
   }
 };
 
-// Profile endpoint
-router.get('/profile', authMiddleware, async (req, res) => {
-  try {
-    res.json({
-      id: req.user._id,
-      username: req.user.username,
-      email: req.user.email,
-      createdAt: req.user.createdAt
-    });
-  } catch (err) {
-    console.error('Profile error:', err);
-    res.status(500).json({ 
-      message: 'Server error',
-      error: process.env.NODE_ENV === 'development' ? err.message : null
-    });
-  }
-});
+// // Profile endpoint
+// router.get('/profile', authMiddleware, async (req, res) => {
+//   try {
+//     res.json({
+//       id: req.user._id,
+//       username: req.user.username,
+//       email: req.user.email,
+//       createdAt: req.user.createdAt
+//     });
+//   } catch (err) {
+//     console.error('Profile error:', err);
+//     res.status(500).json({ 
+//       message: 'Server error',
+//       error: process.env.NODE_ENV === 'development' ? err.message : null
+//     });
+//   }
+// });
 
 // Signup
 router.post('/signup', async (req, res) => {
@@ -149,7 +149,17 @@ router.get('/profile', authMiddleware, async (req, res) => {
   try {
     const user = await User.findById(req.user._id).select('-password');
     if (!user) return res.status(404).json({ message: 'User not found' });
-    res.json(user);
+    res.json({
+      _id: user._id,
+      username: user.username,
+      email: user.email,
+      fullName: user.fullName,
+      contact: user.contact,
+      dob: user.dob,
+      avatar: user.avatar,
+      createdAt: user.createdAt,
+      updatedAt: user.updatedAt
+    });
   } catch (err) {
     res.status(500).json({ message: 'Server error' });
   }

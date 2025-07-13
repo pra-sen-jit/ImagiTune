@@ -45,7 +45,17 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         try {
           const userData = await AuthService.getProfile();
           setToken(storedToken);
-          setUser(userData);
+          setUser({
+            _id: userData._id,
+            username: userData.username,
+            email: userData.email,
+            avatar: userData.avatar,
+            fullName: userData.fullName,
+            contact: userData.contact,
+            dob: userData.dob,
+            createdAt: userData.createdAt,
+            updatedAt: userData.updatedAt
+          });
         } catch (error) {
           logout();
         }
@@ -74,7 +84,17 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const login = (newToken: string, userData: User) => {
     localStorage.setItem("authToken", newToken);
     setToken(newToken);
-    setUser(userData);
+    setUser({
+      _id: userData._id,
+      username: userData.username,
+      email: userData.email,
+      avatar: userData.avatar,
+      fullName: userData.fullName,
+      contact: userData.contact,
+      dob: userData.dob,
+      createdAt: userData.createdAt,
+      updatedAt: userData.updatedAt
+    });
   };
 
   const logout = () => {

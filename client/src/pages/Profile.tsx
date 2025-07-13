@@ -6,7 +6,7 @@ const Profile = () => {
   const { user, login, logout } = useAuth();
   const [fullName, setFullName] = useState(user?.fullName || "");
   const [contact, setContact] = useState(user?.contact || "");
-  const [dob, setDob] = useState(user?.dob ? user.dob.slice(0, 10) : "");
+  const [dob, setDob] = useState(user?.dob ? new Date(user.dob).toISOString().split('T')[0] : "");
   const [avatar, setAvatar] = useState<string | undefined>(user?.avatar);
   const [avatarFile, setAvatarFile] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
@@ -17,10 +17,12 @@ const Profile = () => {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    setFullName(user?.fullName || "");
-    setContact(user?.contact || "");
-    setDob(user?.dob ? user.dob.slice(0, 10) : "");
-    setAvatar(user?.avatar);
+    if (user) {
+      setFullName(user.fullName || "");
+      setContact(user.contact || "");
+      setDob(user.dob ? new Date(user.dob).toISOString().split('T')[0] : "");
+      setAvatar(user.avatar);
+    }
   }, [user]);
 
   const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -45,10 +47,12 @@ const Profile = () => {
     e.preventDefault();
     setSuccessMsg("");
     setErrorMsg("");
-    if (contact.length !== 10) {
+    
+    if (contact && contact.length !== 10) {
       setContactError("Contact number should be exactly 10 digits");
       return;
     }
+    
     try {
       const updated = await AuthService.updateProfile({
         fullName,
@@ -56,10 +60,18 @@ const Profile = () => {
         dob,
         avatar: avatarFile,
       });
+      
       setAvatar(updated.avatar);
       setPreview(null);
       setSuccessMsg("Profile updated successfully!");
-      login(localStorage.getItem("authToken") || "", updated); // update context
+      
+      login(localStorage.getItem("authToken") || "", {
+        ...user!,
+        fullName,
+        contact,
+        dob,
+        avatar: updated.avatar
+      });
     } catch (err: any) {
       setErrorMsg(err.message || "Failed to update profile");
     }
@@ -74,7 +86,7 @@ const Profile = () => {
   return (
     <div className="flex h-full bg-white dark:bg-gray-800">
       {/* Sidebar */}
-      <aside className="fixed left-0 top-0 w-72 h-screen bg-gradient-to-b from-purple-700 to-blue-700 text-white flex flex-col py-12 px-4 select-none z-20 overflow-y-auto">
+      <aside className="fixed left-0 top-0 w-72 h-screen bg-gradient-to-b from-purple-700 to-blue-700 text-white flex flex-col pt-20 pb-12 px-4 select-none z-20 overflow-y-auto">
         <div className="flex flex-col items-center mb-8">
           <div className="relative w-28 h-28 mb-3">
             <img
